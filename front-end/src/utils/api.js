@@ -4,7 +4,7 @@
  */
 import formatReservationDate from "./format-reservation-date";
 import formatReservationTime from "./format-reservation-date";
-import { useHistory } from "react-router-dom";
+
 
 
 const API_BASE_URL =
@@ -22,7 +22,7 @@ headers.append("Content-Type", "application/json");
  * This function is NOT exported because it is not needed outside of this file.
  *
  * @param url
- *  the url for the requst.
+ *  the url for the request.
  * @param options
  *  any options for fetch
  * @param onCancel
@@ -79,10 +79,4 @@ export async function createReservation(reservation, signal) {
     signal,
   };
   return await fetchJson(url, options, reservation);
-}
-
-
-let history = useHistory();
-const onCancel = () => {
-  history.goBack();
 }
