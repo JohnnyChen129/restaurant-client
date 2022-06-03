@@ -2,12 +2,12 @@ import React from "react";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
-
-import CreateReservation from "../reservation/CreateReservation";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
+import ReservationForm from "../components/ReservationForm"
 import useQuery from "../utils/useQuery";
-
+import TableForm from "../components/TableForm";
+import SeatReservation from "../components/SeatReservation";
 
 /**
  * Defines all the routes for the application.
@@ -16,33 +16,36 @@ import useQuery from "../utils/useQuery";
  *
  * @returns {JSX.Element}
  */
-
-
 function Routes() {
+  const query = useQuery();
+  const date = query.get("date");
 
-    const query = useQuery();
-    const date = query.get("date");
-  
-    return (
-      <Switch>
-        <Route exact={true} path="/">
-          <Redirect to={"/dashboard"} />
-        </Route>
-        <Route path="/reservations/new">
-          <CreateReservation/>
-        </Route>
-        
-        <Route exact={true} path="/reservations">
-          <Redirect to={"/dashboard"} />
-        </Route>
-        <Route path="/dashboard">
-          <Dashboard date={date ? date : today()} />
-        </Route>
-        <Route>
-          <NotFound />
-        </Route>
+  return (
+    <Switch>
+      <Route exact={true} path="/">
+        <Redirect to={"/dashboard"} />
+      </Route>
+      <Route exact={true} path="/reservations">
+        <Redirect to={"/dashboard"} />
+      </Route>
+      <Route exact={true} path="/reservations/new">
+        <ReservationForm />
+      </Route>
+      <Route path="/dashboard">
+        <Dashboard date={ date ? date : today()} />
+      </Route>
+      <Route exact={true} path="/tables/new">
+        <TableForm /> 
+      </Route>
+      <Route exact={true} path="/reservations/:reservation_id/seat">
+        <SeatReservation />
+      </Route>
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  );
+}
 
-      </Switch>
-    );
-  }
+
 export default Routes;
