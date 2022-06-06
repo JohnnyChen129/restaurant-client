@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { finishTable } from "../utils/api";
+import { useHistory } from "react-router-dom";
 import FinishButton from "./FinishButton";
 import ErrorAlert from "../layout/ErrorAlert";
 
-export default function Table({ table, loadDashboard }) {
+export default function Table({ table }) {
   const [error, setError] = useState(null);
+  const history = useHistory();
   const handleFinish = async (e) => {
     e.preventDefault();
     try {
@@ -14,7 +16,7 @@ export default function Table({ table, loadDashboard }) {
         )
       ) {
         await finishTable(table.table_id);
-        loadDashboard();
+        history.go(0);
       }
     } catch (error) {
       setError(error);

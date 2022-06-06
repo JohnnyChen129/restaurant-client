@@ -33,7 +33,6 @@ export default function CreateReservation() {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleCancel = (e) => {
     e.preventDefault();
     history.go(-1);
@@ -48,18 +47,10 @@ export default function CreateReservation() {
       setErrors({});
       history.push(`/dashboard?date=${formData.reservation_date}`);
     } catch (error) {
-      if (error.message.split("|").length === 2) {
-        const message1 = error.message.split("|")[0];
-        const message2 = error.message.split("|")[1];
-        console.log(message1, message2)
-        if (!errors[message1] || !errors[message2]) {
-          setErrors({ ...errors, [message1]: 1, [message2]: 1  });
-        }
+      if (!errors[error.message]) {
+        setErrors({ ...errors, [error.message]: 1 });
       }
-     else if (!errors[error.message]) {
-        setErrors({ ...errors, [error.message]: 1 })
     }
-}
     return () => ac.abort();
   };
 

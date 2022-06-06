@@ -1,88 +1,111 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { FaTimes, FaCheck } from "react-icons/fa";
 import { useParams, useHistory } from "react-router-dom";
-import ErrorAlert from "../layout/ErrorAlert";
+import Loading from "../layout/Loading";
 import { readReservation, listTables, seatReservation } from "../utils/api";
+import TableOption from "./TableOption";
 
+export default function SeatReservation() {
+  const [currentReservation, setCurrentReservation] = useState({});
+  const [reservationError, setReservationError] = useState(null);
+  const [availableTables, setAvailableTables] = useState([]);
+  const [tableId, setTableId] = useState("");
+  const [seatingErrors, setSeatingErrors] = useState({});
 
-function SeatReservation() {
   const { reservation_id } = useParams();
-  const { push, goBack } = useHistory();
-  const [reservation, setReservation] = useState({});
-  const [tables, setTables] = useState([]);
-  const [tableId, setTableId] = useState({});
-  const [error, setError] = useState(null);
 
-  useEffect(loadTables, []);
+  const history = useHistory();
 
-  function loadTables(){
+  useEffect(loadSeating, [reservation_id]);
+
+  function loadSeating() {
     const abortController = new AbortController();
-    listTables(abortController.signal).then(setTables);
+    setReservationError(null);
+    readReservation(reservation_id, abortController.signal)
+      .then(setCurrentReservation)
+      .catch(setReservationError);
+    listTables(abortController.signal)
+      .then(setAvailableTables)
+      .catch(setReservationError);
     return () => abortController.abort();
   }
 
-  useEffect(loadReservation, [reservation_id]);
+  const handleSelectChange = (e) => {
+    e.preventDefault();
+    setTableId(e.target.value);
+  };
 
-  function loadReservation() {
-    const abortController = new AbortController();
-    readReservation(reservation_id, abortController.signal).then(setReservation);
-    return () => abortController.abort();
-  }
+  const handleCancel = (e) => {
+    e.preventDefault();
+    history.go(-1);
+  };
 
-  function handleChange({ target }) {
-    setTableId(target.value);
-  }
-
-  async function handleSubmit(e) {
-    const abortController = new AbortController();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSeatingErrors({});
+    const ac = new AbortController();
     try {
-      e.preventDefault();
-      await setError(null);
-      await seatReservation(reservation_id, parseInt(tableId), abortController.signal)
-      push("/dashboard");
-    } catch(error) {
-      setError(error);
+      await seatReservation(reservation_id, tableId, ac.signal);
+      history.push(`/dashboard`);
+    } catch (error) {
+      if (!seatingErrors[error.message]) {
+        setSeatingErrors({ ...seatingErrors, [error.message]: 1 });
+      }
     }
-    return () => abortController.abort();
-  }
+    return () => ac.abort();
+  };
 
-  function handleCancel() {
-    goBack();
-  }
+  const optionMap = availableTables.map((table) => (
+    <TableOption key={table.table_id} table={table} />
+  ));
 
-  return reservation.first_name ? (
-    <form onSubmit={handleSubmit}>
-      <h1>
-        Select seating for {reservation.first_name} {reservation.last_name}'s reservation
-      </h1>
-      <h3>Party size: {reservation.people}</h3>
-      <ErrorAlert error={error} />
-      {tables.length ? (
-        <>
-          <label htmlFor="table">Select A Table: </label>
-          <select value={tableId} onChange={handleChange} name="table_id" required={true}>
-            <option value="">None selected</option>
-            {tables.map((thisTable) => {
-              return (
-                <option value={thisTable.table_id} key={thisTable.table_id}>
-                  {thisTable.table_name} - {thisTable.capacity}
-                </option>
-              );
-            })}
+  if (Object.keys(currentReservation).length && availableTables.length) {
+    return (
+      <div>
+        <div className="seat seat-title row ml-1 mt-1">
+          <h1>Seat Reservation</h1>
+        </div>
+        <div className="seat seat-information row ml-1 mb-3">
+          <h3>
+            #{currentReservation.reservation_id} -{" "}
+            {currentReservation.first_name} {currentReservation.last_name} on{" "}
+            {currentReservation.reservation_date.split("T")[0]} at{" "}
+            {currentReservation.reservation_time} for{" "}
+            {currentReservation.people}
+          </h3>
+        </div>
+        <div className="seat seat-form form-group row ml-1 mb-3">
+          <label htmlFor="table_id">Seat at:</label>
+          <select
+            name="table_id"
+            id="table_id"
+            className="form-control"
+            onChange={handleSelectChange}
+            value={tableId}
+          >
+            <option value="">Select An Option</option>
+            {optionMap}
           </select>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-          <button type="button" className="btn btn-secondary ml-2" onClick={handleCancel}>
-            Cancel
-          </button>
-        </>
-      ) : (
-        <p>Loading tables...</p>
-      )}
-    </form>
-  ) : (
-    <p>Loading reservation...</p>
-  );
+        </div>
+        <div className="seat seat-options row ml-1">
+          <div>
+            <button
+              type="button"
+              className="btn btn-secondary mr-2"
+              onClick={handleCancel}
+            >
+              <FaTimes /> Cancel
+            </button>
+          </div>
+          <div>
+            <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
+              <FaCheck /> Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <Loading error={reservationError} />;
+  }
 }
-
-export default SeatReservation;

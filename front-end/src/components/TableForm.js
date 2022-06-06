@@ -1,79 +1,55 @@
-import { useState } from "react";
-import { useHistory } from "react-router";
-import ErrorAlert from "../layout/ErrorAlert";
-import { createTable } from "../utils/api";
+import React from "react";
+import { FaTimes, FaCheck } from "react-icons/fa";
 
-const TableForm = () => {
-  const initialFormState = {
-    table_name: "",
-    capacity: "",
-    reservation_id: null,
-  };
-
-  let history = useHistory();
-  const [formData, setFormData] = useState({ ...initialFormState });
-  const [error, setError] = useState(null);
-
-  const handleChange = ({ target }) => {
-    setFormData({
-      ...formData,
-      [target.name]:
-        target.name === "capacity" ? Number(target.value) : target.value,
-    });
-  };
-
-  const handleCancel = () => {
-    history.go(-1);
-  };
-
-  const handleSubmit = async (e) => {
-    const abortController = new AbortController();
-    try {
-      e.preventDefault();
-      await createTable(formData, abortController.signal);
-      history.push("/dashboard");
-    } catch (error) {
-      setError(error);
-    }
-    return () => abortController.abort();
-  };
-
+export default function TableForm({
+  title,
+  handleSubmit,
+  tableData,
+  handleChange,
+  handleCancel,
+}) {
   return (
-    <>
-      <ErrorAlert error={error} />
+    <div>
+      <h1>{title} Table</h1>
       <form onSubmit={handleSubmit}>
-        <h2>Create Table</h2>
-        <label htmlFor="table_name">
-          Table Name
+        <div className="form-group">
+          <label htmlFor="table_name">Table Name:</label>
           <input
-          name="table_name"
-          id="table_name"
-          className="form-control"
-          value={formData.table_name}
-          onChange={handleChange}
-          required={true}
+            id="table_name"
+            name="table_name"
+            type="text"
+            className="form-control"
+            required
+            onChange={handleChange}
+            value={tableData.table_name}
           />
-        </label>
-        <label htmlFor="capacity">
-          Capacity
+        </div>
+        <div className="form-group">
+          <label htmlFor="capacity">Capacity:</label>
           <input
-            type="number"
             id="capacity"
             name="capacity"
-            placeholder="Capacity"
+            type="number"
+            className="form-control"
             required
-            min="1"
+            min={1}
             onChange={handleChange}
-            value={formData.capacity}
+            value={tableData.capacity}
           />
-        </label>
-        <button type="submit">Submit</button>
-        <button onClick={handleCancel} type="cancel">
-          Cancel
-        </button>
+        </div>
+        <div className="form-group">
+          <button
+            className="btn btn-secondary mr-2"
+            type="button"
+            onClick={handleCancel}
+          >
+            <FaTimes /> Cancel
+          </button>
+          <button className="btn btn-primary" type="submit">
+            <FaCheck /> Submit
+          </button>
+        </div>
       </form>
-    </>
+    </div>
   );
-};
-
-export default TableForm;
+}

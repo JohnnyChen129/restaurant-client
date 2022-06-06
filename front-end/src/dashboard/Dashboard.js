@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
-import ErrorAlert from "../layout/ErrorAlert";
+import { useHistory } from "react-router-dom";
+import { listReservations, listTables } from "../utils/api";
+import { next, previous } from "../utils/date-time";
 import useQuery from "../utils/useQuery";
-import { next, previous, today } from "../utils/date-time";
-import { listTables } from "../utils/api";
-import { useHistory } from "react-router";
+import ErrorAlert from "../layout/ErrorAlert";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import ReservationList from "../components/ReservationList";
 import TableList from "../components/TableList";
+import './Dashboard.css';
+
 /**
  * Defines the dashboard page.
  * @param date
@@ -16,13 +17,13 @@ import TableList from "../components/TableList";
  */
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
+  const [reservationsError, setReservationsError] = useState(null);
   const query = useQuery();
   const dateQuery = query.get("date");
   const [pageDate, setPageDate] = useState(dateQuery ? dateQuery : date);
-  const history = useHistory();
 
+  const history = useHistory();
 
   useEffect(loadDashboard, [date, pageDate]);
 
@@ -37,7 +38,7 @@ function Dashboard({ date }) {
   };
 
   const todayHandler = () => {
-    setPageDate(today(date));
+    setPageDate(date);
     history.push(`/dashboard?date=${date}`);
   };
 
@@ -48,7 +49,6 @@ function Dashboard({ date }) {
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
-
     listTables(abortController.signal)
       .then(setTables)
       .catch(setReservationsError);
@@ -57,8 +57,10 @@ function Dashboard({ date }) {
 
   return (
     <main>
-      <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3 row ml-1">
+      <div className="dashboard dashboard-title row ml-1">
+        <h1>Dashboard</h1>
+      </div>
+      <div className=" dashboard dashboard-info d-md-flex mb-3 row ml-1">
         <h4 className="mb-0">Reservations for date {pageDate}</h4>
       </div>
       <div className="dashboard dashboard-nav row ml-1 mb-3">
@@ -74,9 +76,17 @@ function Dashboard({ date }) {
           <FaAngleRight />
         </button>
       </div>
-      <ErrorAlert error={reservationsError} />
-      <ReservationList reservations={reservations} />
-      <TableList tables={tables} loadDashboard={loadDashboard} />
+      <div className="dashboard error-list row ml-1">
+        <ErrorAlert error={reservationsError} />
+      </div>
+      <div className="dashboard table-display row mx-1">
+        <div className="col scroll-me">
+          <ReservationList reservations={reservations} />
+        </div>
+        <div className="col">
+          <TableList tables={tables} />
+        </div>
+      </div>
     </main>
   );
 }
