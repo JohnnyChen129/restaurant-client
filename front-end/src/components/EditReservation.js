@@ -15,8 +15,8 @@ export default function EditReservation() {
     setErrors({ ...errors });
   };
 
-  const errorMap = Object.keys(errors).map((error, index) => (
-    <Error key={index} error={error} handleErrorClose={handleErrorClose} />
+  const errorMap = Object.keys(errors).map((error) => (
+    <Error key={error} error={error} handleErrorClose={handleErrorClose} />
   ));
 
   const { reservation_id } = useParams();

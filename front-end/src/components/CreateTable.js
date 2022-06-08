@@ -21,8 +21,8 @@ export default function CreateTable() {
     setTableErrors({ ...tableErrors });
   };
 
-  const errorMap = Object.keys(tableErrors).map((error, index) => (
-    <Error key={index} error={error} handleErrorClose={handleErrorClose} />
+  const errorMap = Object.keys(tableErrors).map((error) => (
+    <Error key={error} error={error} handleErrorClose={handleErrorClose} />
   ));
 
   const handleSubmit = async (e) => {
