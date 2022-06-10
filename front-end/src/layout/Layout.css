@@ -1,4 +1,13 @@
 .side-bar {
-  background-color: #393a44;
-  min-width: 200px;
+  background-color: crimson;
+}
+
+.show {
+  transition: all 1s;
+}
+
+@media screen and (max-width: 991px) {
+  .side-bar {
+    background-color: goldenrod;
+  }
 }
