@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # restaurant-client
 
 /das
@@ -26,3 +27,13 @@ See [../README.md](../README.md) for detailed instructions.
 ![](./front-end/screenshots/us-04-create-table-cancel-before.png)
 ![](./front-end/screenshots/us-05-dashboard-finish-button-before.png)
 ![](./front-end/screenshots/us-06-finish-before.png)
+=======
+# restaurant-client
+
+/das
+# Capstone: Restaurant Reservation System Backend
+
+This starter code for the backend of the capstone project in the Thinkful curriculum.
+
+See [../README.md](../README.md) for detailed instructions.
+>>>>>>> c61b6c5bf965fbcb5fa48cdf3ea14918af04e004
