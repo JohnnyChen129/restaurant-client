@@ -27,6 +27,25 @@ See [../README.md](../README.md) for detailed instructions.
 ![](./front-end/screenshots/us-04-create-table-cancel-before.png)
 ![](./front-end/screenshots/us-05-dashboard-finish-button-before.png)
 ![](./front-end/screenshots/us-06-finish-before.png)
+![](us-06-finish-after.png)
+![](us-06-finish-before.png)
+![](us-06-seated-after.png)
+![](us-06-seated-before.png)
+![](us-07-search-reservations-submit-no-result-after.png)
+![](us-07-search-reservations-submit-no-result-before.png)
+![](us-07-search-reservations-submit-valid-after.png)
+![](us-07-search-reservations-submit-valid-before.png)
+![](us-08-cancel-reservation-before.png)
+![](us-08-dashboard-edit-click-after-no-change-expected.png)
+![](us-08-dashboard-edit-click-before.png)
+![](us-08-dont-cancel-reservation-after.png)
+![](us-08-dont-cancel-reservation-before.png)
+![](us-08-edit-reservation-cancel-after.png)
+![](us-08-edit-reservation-cancel-before.png)
+![](us-08-edit-reservation-submit-after.png)
+
+
+
 =======
 # restaurant-client
 
